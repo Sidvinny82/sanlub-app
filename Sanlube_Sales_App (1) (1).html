@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Sanlube Sales App</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--navy:#0D1B6E;--orange:#E8610A;--gold:#C8A84B;--white:#fff;--light:#F4F6FF;--border:#E2E8F0;--text:#1A1A2E;--muted:#6B7280;--green:#16A34A;--red:#DC2626;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--light);color:var(--text);}
+.topnav{background:var(--navy);display:flex;align-items:center;padding:0 14px;height:54px;border-bottom:3px solid var(--orange);position:sticky;top:0;z-index:100;}
+.brand{display:flex;align-items:center;gap:10px;flex:1;}
+.logo{background:#000;border-radius:6px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;color:#4DB8FF;text-align:center;line-height:1.1;}
+.brand h1{font-family:'Rajdhani',sans-serif;font-size:19px;font-weight:700;color:#fff;letter-spacing:1px;}
+.brand .sub{font-size:10px;color:var(--gold);}
+.nav-tabs{display:flex;gap:4px;}
+.nav-tab{padding:6px 12px;border-radius:6px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;background:transparent;color:rgba(255,255,255,0.55);transition:all 0.2s;}
+.nav-tab.active{background:var(--orange);color:#fff;}
+.nav-tab:hover:not(.active){background:rgba(255,255,255,0.1);color:#fff;}
+.page{display:none;padding:18px 14px;max-width:880px;margin:0 auto;}
+.page.active{display:block;}
+.card{background:#fff;border-radius:12px;border:1px solid var(--border);box-shadow:0 1px 6px rgba(13,27,110,0.08);overflow:hidden;margin-bottom:14px;}
+.card-head{background:var(--navy);padding:10px 15px;display:flex;align-items:center;gap:8px;}
+.card-head h3{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;color:#fff;letter-spacing:0.5px;}
+.card-head .badge{margin-left:auto;background:var(--orange);color:#fff;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600;}
+.card-body{padding:15px;}
+.fg{display:grid;gap:11px;}
+.fr2{grid-template-columns:1fr 1fr;}
+.fr3{grid-template-columns:1fr 1fr 1fr;}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.4px;}
+.field input,.field select,.field textarea{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:#fff;transition:border-color 0.2s;outline:none;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--navy);}
+.field textarea{resize:vertical;min-height:65px;}
+.btn{padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;transition:all 0.2s;display:inline-flex;align-items:center;gap:5px;}
+.btn-primary{background:var(--navy);color:#fff;}
+.btn-orange{background:var(--orange);color:#fff;}
+.btn-green{background:var(--green);color:#fff;}
+.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--text);}
+.btn-ghost:hover{border-color:var(--navy);color:var(--navy);}
+.btn-danger{background:var(--red);color:#fff;}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-full{width:100%;justify-content:center;}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;}
+.pcard{background:#fff;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all 0.2s;}
+.pcard:hover{border-color:var(--navy);box-shadow:0 3px 12px rgba(13,27,110,0.12);}
+.pcard.sel{border-color:var(--orange);background:#FFF8F5;}
+.pimg{width:100%;height:80px;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:26px;}
+.pimg img{width:100%;height:80px;object-fit:cover;}
+.pinfo{padding:9px;}
+.pname{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--navy);margin-bottom:1px;}
+.pcat{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;}
+.pprice{font-size:14px;font-weight:600;color:var(--orange);}
+.pprice span{font-size:10px;color:var(--muted);font-weight:400;}
+.qtbl{width:100%;border-collapse:collapse;font-size:13px;}
+.qtbl th{background:var(--navy);color:#fff;padding:8px 9px;text-align:left;font-weight:600;font-size:11px;}
+.qtbl td{padding:8px 9px;border-bottom:1px solid var(--border);}
+.qtbl tr:nth-child(even) td{background:var(--light);}
+.qinput{width:70px;padding:5px 7px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;text-align:center;}
+.qinput:focus{border-color:var(--navy);outline:none;}
+.tbox{background:var(--light);border-radius:10px;padding:13px;margin-top:10px;}
+.trow{display:flex;justify-content:space-between;padding:4px 0;font-size:14px;}
+.trow.grand{font-weight:700;font-size:16px;color:var(--navy);border-top:2px solid var(--border);padding-top:9px;margin-top:4px;}
+.qlist{display:flex;flex-direction:column;gap:9px;}
+.qitem{background:#fff;border:1px solid var(--border);border-radius:10px;padding:13px 15px;display:flex;align-items:center;gap:11px;}
+.qnum{background:var(--navy);color:#fff;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;padding:5px 9px;border-radius:6px;white-space:nowrap;}
+.qmeta{flex:1;}
+.qcust{font-weight:600;font-size:13px;}
+.qdets{font-size:11px;color:var(--muted);margin-top:2px;}
+.qamt{font-weight:700;font-size:14px;color:var(--orange);white-space:nowrap;}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:14px;}
+.scard{background:#fff;border-radius:10px;padding:13px 15px;border:1px solid var(--border);border-left:4px solid var(--navy);}
+.scard.or{border-left-color:var(--orange);}
+.scard.go{border-left-color:var(--gold);}
+.sval{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--navy);}
+.scard.or .sval{color:var(--orange);}
+.scard.go .sval{color:var(--gold);}
+.slbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;margin-top:1px;}
+.pal{display:flex;flex-direction:column;gap:8px;}
+.pai{background:#fff;border:1px solid var(--border);border-radius:8px;padding:11px 13px;display:flex;align-items:center;gap:10px;}
+.pai .pn{font-weight:600;font-size:14px;flex:1;}
+.pai .pc{font-size:11px;color:var(--muted);}
+.pai .pr{font-weight:600;color:var(--orange);font-size:13px;white-space:nowrap;}
+.itabs{display:flex;gap:5px;margin-bottom:14px;background:#fff;padding:5px;border-radius:8px;border:1px solid var(--border);}
+.itab{padding:7px 14px;border-radius:6px;border:none;cursor:pointer;font-size:12px;font-weight:500;background:transparent;color:var(--muted);transition:all 0.2s;flex:1;text-align:center;}
+.itab.active{background:var(--navy);color:#fff;}
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;align-items:center;justify-content:center;padding:14px;}
+.modal-ov.open{display:flex;}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
+.mhead{background:var(--navy);padding:13px 17px;display:flex;align-items:center;justify-content:space-between;border-radius:14px 14px 0 0;}
+.mhead h3{font-family:'Rajdhani',sans-serif;font-size:16px;color:#fff;font-weight:700;}
+.mclose{background:none;border:none;color:rgba(255,255,255,0.7);font-size:22px;cursor:pointer;line-height:1;}
+.mbody{padding:16px;}
+.mfoot{padding:13px 17px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;}
+.toast{position:fixed;bottom:18px;right:18px;background:var(--navy);color:#fff;padding:11px 18px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,0.2);z-index:9999;transform:translateY(80px);opacity:0;transition:all 0.3s;border-left:4px solid var(--orange);}
+.toast.show{transform:translateY(0);opacity:1;}
+.sbar{position:relative;margin-bottom:12px;}
+.sbar input{width:100%;padding:9px 13px 9px 35px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;}
+.sbar input:focus{border-color:var(--navy);}
+.sbar .si{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px;}
+.sec{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.sec::after{content:'';flex:1;height:2px;background:linear-gradient(to right,var(--orange),transparent);}
+.sep{height:1px;background:var(--border);margin:12px 0;}
+.flex{display:flex;align-items:center;gap:8px;}
+.flxb{display:flex;align-items:center;justify-content:space-between;}
+.mt10{margin-top:10px;}
+.empty{text-align:center;padding:36px 20px;color:var(--muted);}
+.empty .big{font-size:36px;margin-bottom:8px;}
+@media(max-width:580px){.fr2,.fr3{grid-template-columns:1fr;} .stats-row{grid-template-columns:1fr;} .pgrid{grid-template-columns:repeat(2,1fr);} .page{padding:12px 10px;} .nav-tab .lbl{display:none;}}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="brand">
+    <div class="logo">SAN<br>LUB</div>
+    <div><h1>SANLUBE</h1><div class="sub">Sales System</div></div>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('field')" id="tab-field">📱 <span class="lbl">Field</span></button>
+    <button class="nav-tab" onclick="showPage('quotes')" id="tab-quotes">📋 <span class="lbl">Quotes</span></button>
+    <button class="nav-tab" onclick="showPage('admin')" id="tab-admin">⚙️ <span class="lbl">Admin</span></button>
+  </div>
+</nav>
+
+<!-- FIELD PAGE -->
+<div class="page active" id="page-field">
+  <div class="sec">New Quotation</div>
+
+  <div class="card">
+    <div class="card-head"><span>👤</span><h3>Sales Rep & Date</h3></div>
+    <div class="card-body">
+      <div class="fg fr2">
+        <div class="field"><label>Your Name</label><select id="f-rep"></select></div>
+        <div class="field"><label>Date</label><input type="date" id="f-date"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><span>🏭</span><h3>Customer Details</h3></div>
+    <div class="card-body">
+      <div class="fg">
+        <div class="fg fr2">
+          <div class="field"><label>Customer Name *</label><input type="text" id="f-cname" placeholder="Mr./Ms./Company"></div>
+          <div class="field"><label>Company</label><input type="text" id="f-comp" placeholder="Company name"></div>
+        </div>
+        <div class="field"><label>Address</label><input type="text" id="f-addr" placeholder="City, State"></div>
+        <div class="fg fr2">
+          <div class="field"><label>Phone</label><input type="tel" id="f-phone" placeholder="+91 XXXXXXXXXX"></div>
+          <div class="field"><label>Email</label><input type="email" id="f-email" placeholder="email@domain.com"></div>
+        </div>
+        <div class="field"><label>Application / Machine</label><input type="text" id="f-app" placeholder="e.g. CNC Turning, Hydraulic Press"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><span>🛢️</span><h3>Select Products</h3><span class="badge" id="sel-count">0 selected</span></div>
+    <div class="card-body">
+      <div class="sbar"><span class="si">🔍</span><input type="text" id="psearch" placeholder="Search products..." oninput="filterProds()"></div>
+      <div class="pgrid" id="pgrid"></div>
+    </div>
+  </div>
+
+  <div class="card" id="items-card" style="display:none">
+    <div class="card-head"><span>🧾</span><h3>Quote Items</h3></div>
+    <div class="card-body" style="overflow-x:auto">
+      <table class="qtbl">
+        <thead><tr><th>Product</th><th>Pack</th><th style="width:85px">Qty(L)</th><th style="width:85px">Rate/L</th><th>Amount</th><th></th></tr></thead>
+        <tbody id="items-tbody"></tbody>
+      </table>
+      <div class="tbox">
+        <div class="trow"><span>Sub-Total</span><span id="t-sub">₹0.00</span></div>
+        <div class="trow"><span>GST @18%</span><span id="t-gst">₹0.00</span></div>
+        <div class="trow grand"><span>TOTAL</span><span id="t-total">₹0.00</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><span>📝</span><h3>Notes & Terms</h3></div>
+    <div class="card-body">
+      <div class="fg">
+        <div class="fg fr2">
+          <div class="field"><label>Payment Terms</label>
+            <select id="f-pay">
+              <option>100% Advance</option>
+              <option>50% Advance, 50% on Delivery</option>
+              <option>30 Days Credit</option>
+              <option>Against Proforma Invoice</option>
+            </select>
+          </div>
+          <div class="field"><label>Validity (Days)</label>
+            <select id="f-val"><option>5</option><option>7</option><option>10</option><option>15</option></select>
+          </div>
+        </div>
+        <div class="field"><label>Special Notes</label><textarea id="f-notes" placeholder="Trial offer, special discount, etc."></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex mt10" style="flex-wrap:wrap;gap:9px;margin-bottom:20px;">
+    <button class="btn btn-primary" onclick="doGenerate()">📄 Generate PDF</button>
+    <button class="btn btn-ghost" onclick="doPreview()">👁️ Preview</button>
+    <button class="btn btn-ghost" onclick="doClear()">🗑️ Clear</button>
+  </div>
+</div>
+
+<!-- QUOTES PAGE -->
+<div class="page" id="page-quotes">
+  <div class="stats-row">
+    <div class="scard"><div class="sval" id="st-total">0</div><div class="slbl">Total Quotes</div></div>
+    <div class="scard or"><div class="sval" id="st-month">0</div><div class="slbl">This Month</div></div>
+    <div class="scard go"><div class="sval" id="st-val">₹0</div><div class="slbl">Total Value</div></div>
+  </div>
+  <div class="sec">All Quotations</div>
+  <div class="sbar"><span class="si">🔍</span><input type="text" id="qsearch" placeholder="Search customer, quote no..." oninput="filterQuotes()"></div>
+  <div class="qlist" id="qlist"></div>
+</div>
+
+<!-- ADMIN PAGE -->
+<div class="page" id="page-admin">
+  <div class="itabs">
+    <button class="itab active" onclick="showAtab('products')" id="at-products">🛢️ Products</button>
+    <button class="itab" onclick="showAtab('team')" id="at-team">👥 Team</button>
+    <button class="itab" onclick="showAtab('company')" id="at-company">🏢 Company</button>
+  </div>
+
+  <div id="ap-products">
+    <div class="flxb" style="margin-bottom:12px;">
+      <div class="sec" style="margin:0;flex:1;">Product Catalogue</div>
+      <button class="btn btn-orange btn-sm" onclick="openAddProd()">+ Add Product</button>
+    </div>
+    <div class="pal" id="pal"></div>
+  </div>
+
+  <div id="ap-team" style="display:none">
+    <div class="sec">Sales Team</div>
+    <div class="card"><div class="card-body">
+      <div class="flex"><input type="text" id="new-mem" placeholder="Team member name" style="flex:1;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;outline:none;font-family:'DM Sans',sans-serif">
+      <button class="btn btn-primary btn-sm" onclick="addMem()">Add</button></div>
+      <div class="sep"></div>
+      <div id="team-list"></div>
+    </div></div>
+  </div>
+
+  <div id="ap-company" style="display:none">
+    <div class="sec">Company Info</div>
+    <div class="card"><div class="card-body">
+      <div class="fg">
+        <div class="fg fr2">
+          <div class="field"><label>Company Name</label><input type="text" id="co-name"></div>
+          <div class="field"><label>GST Number</label><input type="text" id="co-gst"></div>
+        </div>
+        <div class="field"><label>Address Line 1</label><input type="text" id="co-a1"></div>
+        <div class="field"><label>Address Line 2</label><input type="text" id="co-a2"></div>
+        <div class="fg fr2">
+          <div class="field"><label>Phone 1</label><input type="text" id="co-p1"></div>
+          <div class="field"><label>Phone 2</label><input type="text" id="co-p2"></div>
+        </div>
+        <div class="fg fr2">
+          <div class="field"><label>Email</label><input type="text" id="co-em"></div>
+          <div class="field"><label>Website</label><input type="text" id="co-web"></div>
+        </div>
+        <button class="btn btn-primary" onclick="saveCo()">💾 Save</button>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<!-- MODAL: Add/Edit Product -->
+<div class="modal-ov" id="prod-modal">
+  <div class="modal">
+    <div class="mhead"><h3 id="modal-title">Add Product</h3><button class="mclose" onclick="closeMod()">×</button></div>
+    <div class="mbody">
+      <div class="fg">
+        <div class="fg fr2">
+          <div class="field"><label>Product Name *</label><input type="text" id="pm-name" placeholder="e.g. SUPREME CUT 400"></div>
+          <div class="field"><label>Category</label>
+            <select id="pm-cat">
+              <option>Cutting Oil - Mineral</option><option>Cutting Oil - Semi-Synthetic</option>
+              <option>Cutting Oil - Neat</option><option>Hydraulic Oil</option>
+              <option>Gear Oil</option><option>Engine Oil</option>
+              <option>Rust Preventive</option><option>Grease</option>
+              <option>Transformer Oil</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label>Description</label><textarea id="pm-desc" placeholder="Short description for field team"></textarea></div>
+        <div class="fg fr3">
+          <div class="field"><label>Pack Sizes</label><input type="text" id="pm-pack" placeholder="26L, 210L"></div>
+          <div class="field"><label>Rate (₹/L)</label><input type="number" id="pm-rate" placeholder="125"></div>
+          <div class="field"><label>Min Qty (L)</label><input type="number" id="pm-minqty" placeholder="26"></div>
+        </div>
+        <div class="field"><label>Key Specs</label><input type="text" id="pm-specs" placeholder="pH: 9.4 | Viscosity: 22 cSt"></div>
+        <div class="field"><label>Image URL (optional)</label><input type="text" id="pm-img" placeholder="https://..."></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="closeMod()">Cancel</button>
+      <button class="btn btn-orange" onclick="saveProd()">Save Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Preview -->
+<div class="modal-ov" id="prev-modal">
+  <div class="modal" style="max-width:560px;">
+    <div class="mhead"><h3>Quote Preview</h3><button class="mclose" onclick="closePrev()">×</button></div>
+    <div class="mbody" id="prev-content"></div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="closePrev()">Close</button>
+      <button class="btn btn-green" onclick="doWhatsApp()">📱 WhatsApp</button>
+      <button class="btn btn-orange" onclick="doGenerate()">⬇️ PDF</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var KEYS = {prods:'sl_p',quotes:'sl_q',co:'sl_co',team:'sl_tm',ctr:'sl_ctr'};
+var selItems = {};
+var editProdId = null;
+var prevQuoteData = null;
+
+var DEF_PRODS = [
+  {id:'p1',name:'SUPREME CUT 400',cat:'Cutting Oil - Mineral',desc:'Mineral water-soluble cutting oil',pack:'26L, 210L',rate:125,minqty:26,specs:'pH: 9.4 | Viscosity: 22 cSt | IS 1115',img:''},
+  {id:'p2',name:'CLEAR CUT 200',cat:'Cutting Oil - Mineral',desc:'Entry-level mineral cutting oil',pack:'26L, 210L',rate:100,minqty:26,specs:'pH: 9.2',img:''},
+  {id:'p3',name:'VERSA CUT 720',cat:'Cutting Oil - Semi-Synthetic',desc:'Semi-synthetic, sump life up to 1 year, chlorine-free',pack:'26L, 210L',rate:165,minqty:26,specs:'pH: 9.56 | Chlorine-Free',img:''},
+  {id:'p4',name:'FERRO GRIND 840',cat:'Cutting Oil - Semi-Synthetic',desc:'Cast-iron grinding oil',pack:'26L, 210L',rate:155,minqty:26,specs:'For cast iron grinding',img:''},
+  {id:'p5',name:'OPTIKUT SYN 360 AL',cat:'Cutting Oil - Semi-Synthetic',desc:'Aluminium-only bio-stable oil',pack:'26L, 210L',rate:170,minqty:26,specs:'Aluminium only | Bio-stable',img:''},
+  {id:'p6',name:'HYDRA AW 68',cat:'Hydraulic Oil',desc:'Anti-wear hydraulic oil VG 68',pack:'26L, 210L',rate:120,minqty:26,specs:'ISO VG 68 | IS 3098',img:''},
+  {id:'p7',name:'HYDRA AW 46',cat:'Hydraulic Oil',desc:'Anti-wear hydraulic oil VG 46',pack:'26L, 210L',rate:118,minqty:26,specs:'ISO VG 46 | IS 3098',img:''},
+  {id:'p8',name:'RUST SHIELD ST',cat:'Rust Preventive',desc:'Short-term solvent-based rust preventive',pack:'26L, 210L',rate:90,minqty:26,specs:'24hr salt spray | Barium-free',img:''}
+];
+
+var DEF_CO = {name:'SANLUBE INTERNATIONAL',gst:'07ANTPM8603R1ZZ',a1:'450/1/2, Near Main Mundka Metro Station',a2:'Mundka, New Delhi - 110041',p1:'+91 8510800070',p2:'+91 8882660250',em:'info@sanlube.com',web:'www.sanlube.com'};
+var DEF_TEAM = ['Karan Sharma','Ankit','Ankita','S. Mendiratta'];
+
+function ld(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } }
+function sv(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
+function getP(){ return ld(KEYS.prods)||DEF_PRODS; }
+function getQ(){ return ld(KEYS.quotes)||[]; }
+function getCo(){ return ld(KEYS.co)||DEF_CO; }
+function getTm(){ return ld(KEYS.team)||DEF_TEAM; }
+function getC(){ return ld(KEYS.ctr)||{y:new Date().getFullYear(),n:0}; }
+
+function nextNo(){
+  var c=getC(), yr=new Date().getFullYear();
+  if(c.y!==yr){c={y:yr,n:0};}
+  c.n++;sv(KEYS.ctr,c);
+  return 'SIL/'+yr+'/'+(c.n<10?'00'+c.n:c.n<100?'0'+c.n:c.n);
+}
+
+function fmt(n){ return Number(n).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtD(d){ if(!d)return ''; var dt=new Date(d); return dt.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
+
+function showPage(pg){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('page-'+pg).classList.add('active');
+  document.getElementById('tab-'+pg).classList.add('active');
+  if(pg==='quotes') renderQList();
+  if(pg==='admin') renderPAL();
+}
+
+function showAtab(t){
+  ['products','team','company'].forEach(function(x){
+    document.getElementById('ap-'+x).style.display=x===t?'block':'none';
+    document.getElementById('at-'+x).classList.toggle('active',x===t);
+  });
+  if(t==='team') renderTeam();
+  if(t==='company') loadCoForm();
+}
+
+// ── FIELD ──
+function initField(){
+  document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
+  renderRepSel();
+  renderPGrid(getP());
+}
+
+function renderRepSel(){
+  var sel=document.getElementById('f-rep');
+  sel.innerHTML=getTm().map(function(m){return '<option>'+m+'</option>';}).join('');
+}
+
+function renderPGrid(prods){
+  var g=document.getElementById('pgrid');
+  if(!prods.length){g.innerHTML='<div class="empty"><div class="big">🛢️</div><p>No products</p></div>';return;}
+  g.innerHTML=prods.map(function(p){
+    var s=selItems[p.id];
+    return '<div class="pcard'+(s?' sel':'')+'" onclick="toggleP(\''+p.id+'\')" id="pc-'+p.id+'">'
+      +'<div class="pimg">'+(p.img?'<img src="'+p.img+'" onerror="this.parentNode.innerHTML=\'🛢️\'">':'🛢️')+'</div>'
+      +'<div class="pinfo"><div class="pname">'+p.name+'</div>'
+      +'<div class="pcat">'+p.cat+'</div>'
+      +(p.specs?'<div style="font-size:10px;color:var(--muted);margin-bottom:4px">'+p.specs+'</div>':'')
+      +'<div class="pprice">₹'+p.rate+'<span>/L</span></div>'
+      +'<div style="font-size:10px;color:var(--muted)">'+p.pack+'</div>'
+      +'</div></div>';
+  }).join('');
+}
+
+function filterProds(){
+  var q=document.getElementById('psearch').value.toLowerCase();
+  var f=getP().filter(function(p){return !q||p.name.toLowerCase().includes(q)||p.cat.toLowerCase().includes(q);});
+  renderPGrid(f);
+}
+
+function toggleP(id){
+  var prods=getP();
+  var p=prods.find(function(x){return x.id===id;});
+  if(!p)return;
+  if(selItems[id]){delete selItems[id];}
+  else{selItems[id]={p:p,qty:p.minqty||26,rate:p.rate};}
+  document.getElementById('sel-count').textContent=Object.keys(selItems).length+' selected';
+  document.getElementById('items-card').style.display=Object.keys(selItems).length>0?'block':'none';
+  var q=document.getElementById('psearch').value.toLowerCase();
+  renderPGrid(prods.filter(function(p){return !q||p.name.toLowerCase().includes(q)||p.cat.toLowerCase().includes(q);}));
+  renderItemsTable();
+}
+
+function renderItemsTable(){
+  var tb=document.getElementById('items-tbody');
+  var items=Object.values(selItems);
+  if(!items.length){tb.innerHTML='';updateTotals();return;}
+  tb.innerHTML=items.map(function(item){
+    return '<tr>'
+      +'<td><strong>'+item.p.name+'</strong><br><span style="font-size:11px;color:var(--muted)">'+item.p.cat+'</span></td>'
+      +'<td>'+item.p.pack+'</td>'
+      +'<td><input class="qinput" type="number" value="'+item.qty+'" min="1" onchange="updQty(\''+item.p.id+'\',this.value,\'qty\')"></td>'
+      +'<td><input class="qinput" type="number" value="'+item.rate+'" min="1" style="width:78px" onchange="updQty(\''+item.p.id+'\',this.value,\'rate\')"></td>'
+      +'<td><strong>₹'+fmt(item.qty*item.rate)+'</strong></td>'
+      +'<td><button class="btn btn-danger btn-sm" onclick="toggleP(\''+item.p.id+'\')">✕</button></td>'
+      +'</tr>';
+  }).join('');
+  updateTotals();
+}
+
+function updQty(id,v,f){
+  if(selItems[id]){selItems[id][f]=parseFloat(v)||0;}
+  updateTotals();
+}
+
+function updateTotals(){
+  var items=Object.values(selItems);
+  var sub=items.reduce(function(s,i){return s+i.qty*i.rate;},0);
+  var gst=sub*0.18;
+  document.getElementById('t-sub').textContent='₹'+fmt(sub);
+  document.getElementById('t-gst').textContent='₹'+fmt(gst);
+  document.getElementById('t-total').textContent='₹'+fmt(sub+gst);
+}
+
+function buildQData(){
+  var co=getCo();
+  var items=Object.values(selItems);
+  var sub=items.reduce(function(s,i){return s+i.qty*i.rate;},0);
+  var gst=sub*0.18;
+  var vdays=parseInt(document.getElementById('f-val').value)||5;
+  var dt=new Date(document.getElementById('f-date').value);
+  var vdt=new Date(dt);vdt.setDate(vdt.getDate()+vdays);
+  return {
+    no:nextNo(),
+    date:document.getElementById('f-date').value,
+    valid:vdt.toISOString().split('T')[0],
+    rep:document.getElementById('f-rep').value,
+    cust:{name:document.getElementById('f-cname').value||'Customer',comp:document.getElementById('f-comp').value,addr:document.getElementById('f-addr').value,phone:document.getElementById('f-phone').value,email:document.getElementById('f-email').value,app:document.getElementById('f-app').value},
+    items:items.map(function(i){return {name:i.p.name,pack:i.p.pack,qty:i.qty,rate:i.rate,amt:i.qty*i.rate};}),
+    sub:sub,gst:gst,total:sub+gst,
+    pay:document.getElementById('f-pay').value,
+    notes:document.getElementById('f-notes').value,
+    vdays:vdays,
+    co:co
+  };
+}
+
+function doGenerate(){
+  if(!Object.keys(selItems).length){toast('Please select at least one product');return;}
+  if(!document.getElementById('f-cname').value.trim()){toast('Please enter customer name');return;}
+  var q=buildQData();
+  var qs=getQ();qs.unshift(q);sv(KEYS.quotes,qs);
+  makePDF(q);
+  toast('PDF downloaded!');
+}
+
+function doPreview(){
+  if(!Object.keys(selItems).length){toast('Please select at least one product');return;}
+  var q=buildQData();
+  prevQuoteData=q;
+  var html='<div style="font-size:13px">'
+    +'<div style="background:#0D1B6E;color:white;padding:12px;border-radius:8px;margin-bottom:12px">'
+    +'<div style="font-size:16px;font-weight:700">'+q.co.name+'</div>'
+    +'<div style="font-size:10px;color:#C8A84B;margin-top:2px">'+q.co.p1+' | '+q.co.p2+'</div></div>'
+    +'<div style="display:flex;justify-content:space-between;margin-bottom:10px">'
+    +'<div><b>Quote:</b> '+q.no+'<br><b>Rep:</b> '+q.rep+'</div>'
+    +'<div style="text-align:right"><b>Date:</b> '+fmtD(q.date)+'<br><b>Valid:</b> '+fmtD(q.valid)+'</div></div>'
+    +'<div style="background:#F4F6FF;padding:10px;border-radius:6px;margin-bottom:11px">'
+    +'<b>To: '+q.cust.name+'</b>'+(q.cust.comp?' — '+q.cust.comp:'')
+    +(q.cust.addr?'<br>'+q.cust.addr:'')+(q.cust.phone?'<br>📞 '+q.cust.phone:'')+'</div>'
+    +'<table style="width:100%;border-collapse:collapse;font-size:12px">'
+    +'<thead><tr style="background:#0D1B6E;color:white"><th style="padding:7px">Product</th><th style="padding:7px">Qty</th><th style="padding:7px">Rate</th><th style="padding:7px">Amount</th></tr></thead><tbody>'
+    +q.items.map(function(item,i){return '<tr style="background:'+(i%2?'#f4f6ff':'white')+'"><td style="padding:7px">'+item.name+'</td><td style="padding:7px;text-align:center">'+item.qty+'L</td><td style="padding:7px;text-align:center">₹'+item.rate+'</td><td style="padding:7px;text-align:right">₹'+fmt(item.amt)+'</td></tr>';}).join('')
+    +'</tbody></table>'
+    +'<div style="text-align:right;margin-top:10px">'
+    +'<div>Sub-Total: <b>₹'+fmt(q.sub)+'</b></div>'
+    +'<div>GST @18%: <b>₹'+fmt(q.gst)+'</b></div>'
+    +'<div style="font-size:15px;color:#0D1B6E;font-weight:700;margin-top:5px">TOTAL: ₹'+fmt(q.total)+'</div></div>'
+    +'<div style="margin-top:10px;font-size:11px;color:#666">Payment: '+q.pay+'</div></div>';
+  document.getElementById('prev-content').innerHTML=html;
+  document.getElementById('prev-modal').classList.add('open');
+}
+
+function doWhatsApp(){
+  if(!prevQuoteData)return;
+  var q=prevQuoteData;
+  var lines=q.items.map(function(i){return '• '+i.name+': '+i.qty+'L @ ₹'+i.rate+'/L = ₹'+fmt(i.amt);}).join('\n');
+  var msg='*QUOTATION — '+q.co.name+'*\nQuote No: '+q.no+'\nDate: '+fmtD(q.date)+'\n\n*To: '+q.cust.name+'*'+(q.cust.comp?'\n'+q.cust.comp:'')+(q.cust.addr?'\n'+q.cust.addr:'')+'\n\n*Items:*\n'+lines+'\n\nSub-Total: ₹'+fmt(q.sub)+'\nGST @18%: ₹'+fmt(q.gst)+'\n*TOTAL: ₹'+fmt(q.total)+'*\n\nPayment: '+q.pay+'\nValid Until: '+fmtD(q.valid)+'\n\n📞 '+q.co.p1+' | '+q.co.web;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+
+function closePrev(){document.getElementById('prev-modal').classList.remove('open');}
+
+function doClear(){
+  selItems={};
+  ['f-cname','f-comp','f-addr','f-phone','f-email','f-app','f-notes'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('sel-count').textContent='0 selected';
+  document.getElementById('items-card').style.display='none';
+  renderPGrid(getP());
+  renderItemsTable();
+  toast('Form cleared');
+}
+
+// ── PDF ──
+function makePDF(q){
+  var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'});
+  var W=210,M=15;
+
+  // Header
+  doc.setFillColor(13,27,110);doc.rect(0,0,W,48,'F');
+  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(18);
+  doc.text(q.co.name,50,14);
+  doc.setFont('helvetica','italic');doc.setFontSize(8.5);doc.setTextColor(200,168,75);
+  doc.text('MANUFACTURERS & EXPORTERS of Specialty Industrial Lubricants',50,21);
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(204,224,255);
+  doc.text('ALL KINDS OF INDUSTRIAL AND AUTOMOTIVE LUBRICANTS',50,27);
+  doc.text(q.co.a1+', '+q.co.a2,50,32);
+  doc.setTextColor(200,168,75);
+  doc.text(q.co.p1+' | '+q.co.p2+' | '+q.co.em+' | '+q.co.web,50,38);
+  doc.setFillColor(232,97,10);doc.rect(0,44.5,W,2.5,'F');
+  doc.setFillColor(200,168,75);doc.rect(0,47,W,1.2,'F');
+
+  var y=57;
+  doc.setTextColor(13,27,110);doc.setFont('helvetica','bold');doc.setFontSize(15);
+  doc.text('QUOTATION',W/2,y,{align:'center'});
+  doc.setDrawColor(232,97,10);doc.setLineWidth(1);doc.line(W/2-30,y+1.5,W/2+30,y+1.5);
+  y+=10;
+
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(68,68,68);
+  doc.text('Quotation No: '+q.no,M,y);doc.text('Date: '+fmtD(q.date),W-M,y,{align:'right'});y+=5;
+  doc.text('Sales Rep: '+q.rep,M,y);doc.text('Valid Until: '+fmtD(q.valid),W-M,y,{align:'right'});
+  doc.setDrawColor(200,168,75);doc.setLineWidth(0.5);y+=5;doc.line(M,y,W-M,y);y+=7;
+
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(13,27,110);
+  doc.text('TO:',M,y);
+  doc.text(q.cust.name+(q.cust.comp?' — '+q.cust.comp:''),M+12,y);
+  doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(50,50,50);
+  if(q.cust.addr){y+=5;doc.text(q.cust.addr,M+12,y);}
+  if(q.cust.phone){y+=5;doc.text('Phone: '+q.cust.phone,M+12,y);}
+  if(q.cust.email){y+=5;doc.text('Email: '+q.cust.email,M+12,y);}
+  if(q.cust.app){y+=5;doc.text('Application: '+q.cust.app,M+12,y);}
+  y+=9;
+
+  // Table
+  var cols=[10,70,26,18,22,24];
+  var hdrs=['S.No.','Product','Pack','Qty(L)','Rate(Rs/L)','Amount(Rs)'];
+  doc.setFillColor(13,27,110);doc.rect(M,y-5,W-2*M,8,'F');
+  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(8);
+  var cx=M+1;
+  hdrs.forEach(function(h,i){doc.text(h,cx+cols[i]/2,y,{align:'center'});cx+=cols[i];});
+  doc.setDrawColor(232,97,10);doc.setLineWidth(1);doc.line(M,y+1,W-M,y+1);
+  y+=6;
+
+  q.items.forEach(function(item,i){
+    var bg=i%2===0?[255,255,255]:[245,248,255];
+    doc.setFillColor(bg[0],bg[1],bg[2]);doc.rect(M,y-4.5,W-2*M,7.5,'F');
+    doc.setDrawColor(204,204,204);doc.setLineWidth(0.3);doc.line(M,y+3,W-M,y+3);
+    doc.setTextColor(34,34,34);doc.setFont('helvetica','normal');doc.setFontSize(7.5);
+    cx=M+1;
+    var vals=[String(i+1),item.name,item.pack,String(item.qty),''+item.rate,fmt(item.amt)];
+    vals.forEach(function(v,j){
+      if(j===1){doc.setFont('helvetica','bold');doc.text(v,cx+2,y,{maxWidth:cols[j]-4});doc.setFont('helvetica','normal');}
+      else doc.text(v,cx+cols[j]/2,y,{align:'center'});
+      cx+=cols[j];
+    });
+    y+=8;
+  });
+
+  y+=3;
+  [['Sub-Total',fmt(q.sub)],['GST @18%',fmt(q.gst)]].forEach(function(r){
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(68,68,68);
+    doc.text(r[0],W-M-30,y,{align:'right'});doc.text(r[1],W-M,y,{align:'right'});y+=6;
+  });
+  doc.setFillColor(239,244,255);doc.rect(W-M-70,y-5,70,8,'F');
+  doc.setDrawColor(13,27,110);doc.setLineWidth(0.8);doc.line(W-M-70,y-5,W-M,y-5);
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(13,27,110);
+  doc.text('TOTAL',W-M-30,y,{align:'right'});doc.text('Rs '+fmt(q.total),W-M,y,{align:'right'});
+  y+=12;
+
+  doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(13,27,110);
+  doc.text('Terms & Conditions:',M,y);y+=6;
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(50,50,50);
+  ['1. Payment Terms: '+q.pay,'2. Validity: '+q.vdays+' Days from date of issue','3. Delivery: Ex-Works, Mundka, New Delhi','4. GST @18% applicable as above','5. Prices subject to change after validity period'].forEach(function(t){doc.text(t,M,y);y+=5;});
+  if(q.notes){y+=3;doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(13,27,110);doc.text('Notes:',M,y);doc.setFont('helvetica','normal');doc.setTextColor(50,50,50);doc.text(q.notes,M+18,y);}
+
+  y+=10;
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(13,27,110);
+  doc.text('For SANLUBE INTERNATIONAL',W-M,y,{align:'right'});
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(85,85,85);
+  doc.text('Authorised Signatory',W-M,y+12,{align:'right'});
+
+  doc.setFillColor(13,27,110);doc.rect(0,285,W,12,'F');
+  doc.setFillColor(232,97,10);doc.rect(0,283,W,2,'F');
+  doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(255,255,255);
+  doc.text('SANLUBE INTERNATIONAL  |  '+q.co.web+'  |  '+q.co.p1+'  |  '+q.co.p2,W/2,291,{align:'center'});
+
+  var fname='Quotation_'+q.cust.name.replace(/[^a-zA-Z0-9]/g,'')+'_'+q.no.replace(/\//g,'-')+'.pdf';
+  doc.save(fname);
+}
+
+// ── QUOTES ──
+function renderQList(filter){
+  filter=filter||'';
+  var all=getQ();
+  var qs=all.filter(function(q){return !filter||q.cust.name.toLowerCase().includes(filter)||q.no.toLowerCase().includes(filter)||(q.cust.comp||'').toLowerCase().includes(filter);});
+  var now=new Date();
+  var thisM=all.filter(function(q){var d=new Date(q.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).length;
+  var tv=all.reduce(function(s,q){return s+q.total;},0);
+  document.getElementById('st-total').textContent=all.length;
+  document.getElementById('st-month').textContent=thisM;
+  document.getElementById('st-val').textContent='Rs '+Math.round(tv/1000)+'K';
+  var list=document.getElementById('qlist');
+  if(!qs.length){list.innerHTML='<div class="empty"><div class="big">📋</div><p>No quotations yet</p></div>';return;}
+  list.innerHTML=qs.map(function(q){
+    return '<div class="qitem"><div class="qnum">'+q.no+'</div>'
+      +'<div class="qmeta"><div class="qcust">'+q.cust.name+(q.cust.comp?' · '+q.cust.comp:'')+'</div>'
+      +'<div class="qdets">'+fmtD(q.date)+' · '+q.rep+' · '+q.items.length+' item(s)</div></div>'
+      +'<div style="text-align:right"><div class="qamt">₹'+fmt(q.total)+'</div></div></div>';
+  }).join('');
+}
+
+function filterQuotes(){renderQList(document.getElementById('qsearch').value.toLowerCase());}
+
+// ── ADMIN PRODUCTS ──
+function renderPAL(){
+  var list=document.getElementById('pal');
+  var prods=getP();
+  if(!prods.length){list.innerHTML='<div class="empty"><div class="big">🛢️</div><p>No products</p></div>';return;}
+  list.innerHTML=prods.map(function(p){
+    return '<div class="pai"><div style="font-size:18px">'+(p.img?'🖼️':'🛢️')+'</div>'
+      +'<div style="flex:1"><div class="pn">'+p.name+'</div><div class="pc">'+p.cat+' · '+p.pack+'</div></div>'
+      +'<div class="pr">₹'+p.rate+'/L</div>'
+      +'<button class="btn btn-ghost btn-sm" onclick="editProd(\''+p.id+'\')">✏️</button>'
+      +'<button class="btn btn-danger btn-sm" onclick="delProd(\''+p.id+'\')">🗑️</button></div>';
+  }).join('');
+}
+
+function openAddProd(){
+  editProdId=null;
+  document.getElementById('modal-title').textContent='Add New Product';
+  ['pm-name','pm-desc','pm-pack','pm-rate','pm-minqty','pm-specs','pm-img'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('prod-modal').classList.add('open');
+}
+
+function editProd(id){
+  var p=getP().find(function(x){return x.id===id;});
+  if(!p)return;
+  editProdId=id;
+  document.getElementById('modal-title').textContent='Edit Product';
+  document.getElementById('pm-name').value=p.name;
+  document.getElementById('pm-cat').value=p.cat;
+  document.getElementById('pm-desc').value=p.desc||'';
+  document.getElementById('pm-pack').value=p.pack||'';
+  document.getElementById('pm-rate').value=p.rate||'';
+  document.getElementById('pm-minqty').value=p.minqty||26;
+  document.getElementById('pm-specs').value=p.specs||'';
+  document.getElementById('pm-img').value=p.img||'';
+  document.getElementById('prod-modal').classList.add('open');
+}
+
+function saveProd(){
+  var name=document.getElementById('pm-name').value.trim();
+  if(!name){toast('Product name is required');return;}
+  var prods=getP();
+  var prod={id:editProdId||('p'+Date.now()),name:name,cat:document.getElementById('pm-cat').value,desc:document.getElementById('pm-desc').value,pack:document.getElementById('pm-pack').value||'26L, 210L',rate:parseFloat(document.getElementById('pm-rate').value)||0,minqty:parseFloat(document.getElementById('pm-minqty').value)||26,specs:document.getElementById('pm-specs').value,img:document.getElementById('pm-img').value};
+  if(editProdId){var idx=prods.findIndex(function(x){return x.id===editProdId;});if(idx>=0)prods[idx]=prod;}
+  else prods.push(prod);
+  sv(KEYS.prods,prods);
+  closeMod();renderPAL();renderPGrid(getP());
+  toast('Product saved!');
+}
+
+function delProd(id){
+  if(!confirm('Delete this product?'))return;
+  var prods=getP().filter(function(x){return x.id!==id;});
+  sv(KEYS.prods,prods);renderPAL();renderPGrid(prods);toast('Deleted');
+}
+
+function closeMod(){document.getElementById('prod-modal').classList.remove('open');}
+
+// ── TEAM ──
+function renderTeam(){
+  var list=document.getElementById('team-list');
+  var team=getTm();
+  list.innerHTML=team.map(function(m,i){
+    return '<div class="pai"><div style="font-size:18px">👤</div>'
+      +'<div class="pn" style="flex:1">'+m+'</div>'
+      +'<button class="btn btn-danger btn-sm" onclick="remMem('+i+')">Remove</button></div>';
+  }).join('');
+  renderRepSel();
+}
+
+function addMem(){
+  var name=document.getElementById('new-mem').value.trim();
+  if(!name)return;
+  var team=getTm();team.push(name);sv(KEYS.team,team);
+  document.getElementById('new-mem').value='';
+  renderTeam();toast('Team member added!');
+}
+
+function remMem(i){
+  var team=getTm();team.splice(i,1);sv(KEYS.team,team);renderTeam();
+}
+
+// ── COMPANY ──
+function loadCoForm(){
+  var co=getCo();
+  ['name','gst','a1','a2','p1','p2','em','web'].forEach(function(k){
+    var el=document.getElementById('co-'+k);if(el)el.value=co[k]||'';
+  });
+}
+
+function saveCo(){
+  var co={};
+  ['name','gst','a1','a2','p1','p2','em','web'].forEach(function(k){co[k]=document.getElementById('co-'+k).value;});
+  sv(KEYS.co,co);toast('Company details saved!');
+}
+
+// ── TOAST ──
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},3000);
+}
+
+// ── INIT ──
+window.addEventListener('DOMContentLoaded',function(){initField();});
+</script>
+</body>
+</html>
