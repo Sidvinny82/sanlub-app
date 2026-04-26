@@ -521,7 +521,7 @@ function renderItemsTable() {
   updateTotals();
 }
 
-function updQty(id,v,f){if(selItems[id]){selItems[id][f]=parseFloat(v)||0;} updateTotals();}
+function updQty(id,v,f){if(selItems[id]){selItems[id][f]=parseFloat(v)||0;} renderItemsTable();}
 
 function updateTotals(){
   var items=Object.values(selItems);
